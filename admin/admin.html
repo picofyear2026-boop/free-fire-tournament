@@ -1,0 +1,2637 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Free Fire Tournament - Admin Panel</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      color: white;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(0,255,255,0.12), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(255,0,200,0.12), transparent 30%),
+        #050509;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,255,255,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.045) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridMove 8s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes gridMove {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(40px);
+      }
+    }
+
+    .container {
+      width: 94%;
+      max-width: 1250px;
+      margin: auto;
+      padding: 20px 0 50px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 20px;
+      border: 1px solid rgba(0,255,255,0.3);
+      border-radius: 18px;
+      background: rgba(8,8,15,0.9);
+      box-shadow:
+        0 0 25px rgba(0,255,255,0.08),
+        inset 0 0 20px rgba(255,0,200,0.03);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 65px;
+      height: 65px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 12px cyan);
+    }
+
+    .brand h1 {
+      font-size: 23px;
+      color: white;
+      text-shadow:
+        0 0 8px cyan,
+        0 0 18px cyan;
+    }
+
+    .brand p {
+      margin-top: 5px;
+      color: #888;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .logout-btn {
+      width: auto;
+      margin: 0;
+      padding: 11px 18px;
+      background: transparent;
+      color: #ff4adf;
+      border: 1px solid #ff4adf;
+      box-shadow: 0 0 12px rgba(255,0,200,0.25);
+    }
+
+    .logout-btn:hover {
+      background: #ff4adf;
+      color: black;
+      box-shadow: 0 0 20px rgba(255,0,200,0.6);
+    }
+
+    .page-title {
+      margin: 30px 0 15px;
+      font-size: 28px;
+      color: cyan;
+      text-shadow: 0 0 12px cyan;
+    }
+
+    .section-title {
+      margin-bottom: 18px;
+      color: cyan;
+      text-shadow: 0 0 10px cyan;
+      font-size: 20px;
+    }
+
+    .card {
+      background: rgba(10,10,18,0.94);
+      border: 1px solid rgba(0,255,255,0.32);
+      border-radius: 18px;
+      padding: 22px;
+      margin-top: 20px;
+      box-shadow:
+        0 0 25px rgba(0,255,255,0.06),
+        inset 0 0 25px rgba(255,0,200,0.025);
+    }
+
+    .tournament-name {
+      font-size: 24px;
+      color: #ff3bd4;
+      font-weight: bold;
+      margin-bottom: 18px;
+      text-shadow: 0 0 10px #ff3bd4;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .info-box {
+      background: #08080e;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .info-box span {
+      display: block;
+      color: #777;
+      font-size: 11px;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+    }
+
+    .info-box strong {
+      font-size: 18px;
+    }
+
+    .status-open {
+      color: #00ff88;
+      text-shadow: 0 0 10px #00ff88;
+    }
+
+    .status-closed {
+      color: #ff4444;
+      text-shadow: 0 0 10px #ff4444;
+    }
+
+    .available {
+      color: #00ffff;
+      text-shadow: 0 0 10px cyan;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .form-group {
+      margin-top: 3px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid rgba(0,255,255,0.3);
+      background: #07070d;
+      color: white;
+      outline: none;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: cyan;
+      box-shadow: 0 0 12px rgba(0,255,255,0.25);
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 9px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: 0.2s;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      background: cyan;
+      color: black;
+      font-size: 14px;
+      box-shadow: 0 0 17px rgba(0,255,255,0.4);
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 28px rgba(0,255,255,0.75);
+    }
+
+    .refresh-btn {
+      width: auto;
+      padding: 10px 17px;
+      background: transparent;
+      color: cyan;
+      border: 1px solid cyan;
+      box-shadow: 0 0 10px rgba(0,255,255,0.2);
+    }
+
+    .refresh-btn:hover {
+      background: cyan;
+      color: black;
+    }
+
+    .verify-btn {
+      padding: 9px 12px;
+      background: #00ff88;
+      color: black;
+      box-shadow: 0 0 12px rgba(0,255,136,0.3);
+    }
+
+    .verify-btn:hover {
+      box-shadow: 0 0 20px rgba(0,255,136,0.65);
+      transform: translateY(-1px);
+    }
+
+    .reject-btn {
+      padding: 9px 12px;
+      background: #ff3d5a;
+      color: white;
+      box-shadow: 0 0 12px rgba(255,60,90,0.25);
+    }
+
+    .reject-btn:hover {
+      box-shadow: 0 0 20px rgba(255,60,90,0.55);
+      transform: translateY(-1px);
+    }
+
+    .open-btn {
+      padding: 10px 16px;
+      background: #00ff88;
+      color: black;
+      box-shadow: 0 0 14px rgba(0,255,136,0.3);
+    }
+
+    .open-btn:hover {
+      box-shadow: 0 0 22px rgba(0,255,136,0.6);
+    }
+
+    .close-btn {
+      padding: 10px 16px;
+      background: #ff4455;
+      color: white;
+      box-shadow: 0 0 14px rgba(255,68,85,0.3);
+    }
+
+    .close-btn:hover {
+      box-shadow: 0 0 22px rgba(255,68,85,0.6);
+    }
+
+    .message {
+      display: none;
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .success {
+      display: block;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      background: rgba(0,255,136,0.07);
+    }
+
+    .error {
+      display: block;
+      color: #ff6677;
+      border: 1px solid #ff4455;
+      background: rgba(255,0,0,0.07);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 12px;
+      background: #08080e;
+      border: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: cyan;
+      text-shadow: 0 0 10px cyan;
+    }
+
+    .stat-label {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #777;
+    }
+
+    .dashboard-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #08080e;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+    }
+
+    .dashboard-status-text {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .dashboard-status-text strong {
+      color: white;
+    }
+
+    .selector-box {
+      margin-bottom: 20px;
+      padding: 16px;
+      border: 1px solid rgba(0,255,255,0.18);
+      border-radius: 12px;
+      background: #08080e;
+    }
+
+    .selector-label {
+      color: #aaa;
+      font-size: 12px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .selected-tournament-note {
+      margin-top: 9px;
+      color: #777;
+      font-size: 11px;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1050px;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #10101a;
+      color: cyan;
+      font-size: 12px;
+      padding: 13px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0,255,255,0.25);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 13px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: #ddd;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: rgba(0,255,255,0.025);
+    }
+
+    .utr {
+      color: #ffd166;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .slot {
+      color: #00ff88;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 0 8px #00ff88;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .pending {
+      color: #ffd166;
+      border: 1px solid #ffd166;
+      background: rgba(255,209,102,0.08);
+    }
+
+    .verified {
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      background: rgba(0,255,136,0.08);
+    }
+
+    .rejected {
+      color: #ff5267;
+      border: 1px solid #ff5267;
+      background: rgba(255,82,103,0.08);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1000px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 850px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
+      }
+
+      .header {
+        align-items: flex-start;
+      }
+
+      .brand h1 {
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .container {
+        width: 94%;
+      }
+
+      .header {
+        flex-direction: column;
+      }
+
+      .logout-btn {
+        width: 100%;
+      }
+
+      .info-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 17px;
+      }
+
+      .page-title {
+        font-size: 23px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+
+  <div class="header">
+
+<div class="brand">
+
+  <img
+    src="/images/tournament-logo.png"
+    class="logo"
+    alt="Tournament Logo"
+  >
+
+  <div>
+    <h1>FREE FIRE ADMIN PANEL</h1>
+    <p>TOURNAMENT CONTROL CENTER</p>
+  </div>
+
+</div>
+
+<button
+  class="logout-btn"
+  onclick="logout()"
+>
+  LOGOUT
+</button>
+
+  </div>
+
+  <div class="page-title">
+    ⚡ ADMIN DASHBOARD
+  </div>
+
+  <!-- ==========================================
+       TOURNAMENT SELECTOR
+       ========================================== -->
+
+  <div class="card">
+
+<div class="section-title">
+  🎯 SELECT TOURNAMENT
+</div>
+
+<div class="selector-box">
+
+  <label
+    class="selector-label"
+    for="tournamentSelector"
+  >
+    Choose which tournament you want to manage
+  </label>
+
+  <select
+    id="tournamentSelector"
+    onchange="selectTournament(this.value)"
+  >
+
+    <option value="">
+      Loading tournaments...
+    </option>
+
+  </select>
+
+  <div
+    class="selected-tournament-note"
+    id="selectedTournamentNote"
+  >
+    Loading tournament list...
+  </div>
+
+</div>
+
+  </div>
+
+  <!-- ==========================================
+       DASHBOARD STATISTICS
+       ========================================== -->
+
+  <div class="card">
+
+<div class="section-title">
+  📊 TOURNAMENT STATISTICS
+</div>
+
+<div class="stats-grid">
+
+  <div class="stat">
+    <div
+      class="stat-number"
+      id="dashboardTotal"
+    >
+      0
+    </div>
+
+    <div class="stat-label">
+      TOTAL PLAYERS
+    </div>
+  </div>
+
+  <div class="stat">
+    <div
+      class="stat-number"
+      id="dashboardVerified"
+    >
+      0
+    </div>
+
+    <div class="stat-label">
+      VERIFIED
+    </div>
+  </div>
+
+  <div class="stat">
+    <div
+      class="stat-number"
+      id="dashboardPending"
+    >
+      0
+    </div>
+
+    <div class="stat-label">
+      PENDING
+    </div>
+  </div>
+
+  <div class="stat">
+    <div
+      class="stat-number"
+      id="dashboardRejected"
+    >
+      0
+    </div>
+
+    <div class="stat-label">
+      REJECTED
+    </div>
+  </div>
+
+  <div class="stat">
+    <div
+      class="stat-number"
+      id="dashboardAvailable"
+    >
+      0
+    </div>
+
+    <div class="stat-label">
+      AVAILABLE SLOTS
+    </div>
+  </div>
+
+</div>
+
+<div class="dashboard-status">
+
+  <div class="dashboard-status-text">
+    Registration:
+    <strong id="dashboardRegistrationStatus">
+      ---
+    </strong>
+  </div>
+
+  <div id="dashboardStatusButtons">
+  </div>
+
+</div>
+
+  </div>
+
+  <!-- ==========================================
+       SELECTED TOURNAMENT
+       ========================================== -->
+
+  <div class="card">
+
+<div class="section-title">
+  🎮 SELECTED TOURNAMENT
+</div>
+
+<div
+  id="tournamentLoading"
+  class="loading"
+>
+  Loading tournament...
+</div>
+
+<div
+  id="tournamentDetails"
+  class="hidden"
+>
+
+  <div
+    class="tournament-name"
+    id="currentTournamentName"
+  >
+    ---
+  </div>
+
+  <div class="info-grid">
+
+    <div class="info-box">
+      <span>Date</span>
+      <strong id="currentDate">---</strong>
+    </div>
+
+    <div class="info-box">
+      <span>Time</span>
+      <strong id="currentTime">---</strong>
+    </div>
+
+    <div class="info-box">
+      <span>Entry Fee</span>
+      <strong id="currentFee">₹0</strong>
+    </div>
+
+    <div class="info-box">
+      <span>Status</span>
+      <strong id="currentStatus">---</strong>
+    </div>
+
+  </div>
+
+  <div
+    class="info-grid"
+    style="margin-top:12px;"
+  >
+
+    <div class="info-box">
+      <span>Verified Players</span>
+      <strong id="currentPlayers">0</strong>
+    </div>
+
+    <div class="info-box">
+      <span>Total Slots</span>
+      <strong id="currentSlots">48</strong>
+    </div>
+
+    <div class="info-box">
+      <span>Available Slots</span>
+      <strong
+        id="currentAvailableSlots"
+        class="available"
+      >
+        0
+      </strong>
+    </div>
+
+    <div class="info-box">
+      <span>Room ID</span>
+      <strong id="currentRoomId">---</strong>
+    </div>
+
+  </div>
+
+  <div
+    class="info-grid"
+    style="margin-top:12px;"
+  >
+
+    <div class="info-box">
+      <span>Room Password</span>
+      <strong id="currentRoomPassword">---</strong>
+    </div>
+
+  </div>
+
+</div>
+
+  </div>
+
+  <!-- ==========================================
+       CREATE TOURNAMENT
+       ========================================== -->
+
+  <div class="card">
+
+<div class="section-title">
+  🏆 CREATE NEW TOURNAMENT
+</div>
+
+<form id="tournamentForm">
+
+  <div class="form-grid">
+
+    <div class="form-group full">
+
+      <label>Tournament Name</label>
+
+      <input
+        type="text"
+        id="tournamentName"
+        placeholder="Example: Daily Free Fire Battle"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Tournament Date</label>
+
+      <input
+        type="date"
+        id="tournamentDate"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Tournament Time</label>
+
+      <select
+        id="tournamentTime"
+        required
+      >
+
+        <option value="">
+          Select Tournament Time
+        </option>
+
+        <option value="08:00">8:00 AM</option>
+        <option value="08:30">8:30 AM</option>
+
+        <option value="09:00">9:00 AM</option>
+        <option value="09:30">9:30 AM</option>
+
+        <option value="10:00">10:00 AM</option>
+        <option value="10:30">10:30 AM</option>
+
+        <option value="11:00">11:00 AM</option>
+        <option value="11:30">11:30 AM</option>
+
+        <option value="12:00">12:00 PM</option>
+        <option value="12:30">12:30 PM</option>
+
+        <option value="13:00">1:00 PM</option>
+        <option value="13:30">1:30 PM</option>
+
+        <option value="14:00">2:00 PM</option>
+        <option value="14:30">2:30 PM</option>
+
+        <option value="15:00">3:00 PM</option>
+        <option value="15:30">3:30 PM</option>
+
+        <option value="16:00">4:00 PM</option>
+        <option value="16:30">4:30 PM</option>
+
+        <option value="17:00">5:00 PM</option>
+        <option value="17:30">5:30 PM</option>
+
+        <option value="18:00">6:00 PM</option>
+        <option value="18:30">6:30 PM</option>
+
+        <option value="19:00">7:00 PM</option>
+        <option value="19:30">7:30 PM</option>
+
+        <option value="20:00">8:00 PM</option>
+        <option value="20:30">8:30 PM</option>
+
+        <option value="21:00">9:00 PM</option>
+        <option value="21:30">9:30 PM</option>
+
+        <option value="22:00">10:00 PM</option>
+        <option value="22:30">10:30 PM</option>
+
+        <option value="23:00">11:00 PM</option>
+        <option value="23:30">11:30 PM</option>
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Entry Fee (₹)</label>
+
+      <input
+        type="number"
+        id="entryFee"
+        value="10"
+        min="0"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Maximum Slots</label>
+
+      <input
+        type="number"
+        id="maxSlots"
+        value="48"
+        min="1"
+        max="48"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Room ID</label>
+
+      <input
+        type="text"
+        id="roomId"
+        placeholder="Enter Free Fire Room ID"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Room Password</label>
+
+      <input
+        type="text"
+        id="roomPassword"
+        placeholder="Enter Room Password"
+        required
+      >
+
+    </div>
+
+    <div class="form-group full">
+
+      <label>Registration Status</label>
+
+      <select id="registrationStatus">
+
+        <option value="OPEN">
+          OPEN
+        </option>
+
+        <option value="CLOSED">
+          CLOSED
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <button
+    type="submit"
+    class="primary-btn"
+  >
+    🚀 CREATE TOURNAMENT
+  </button>
+
+</form>
+
+<div
+  id="tournamentMessage"
+  class="message"
+></div>
+
+  </div>
+
+  <!-- ==========================================
+       PLAYER MANAGEMENT
+       ========================================== -->
+
+  <div class="card">
+
+<div
+  style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+  "
+>
+
+  <div
+    class="section-title"
+    style="margin:0;"
+  >
+    👥 PLAYER MANAGEMENT
+  </div>
+
+  <button
+    class="refresh-btn"
+    onclick="refreshEverything()"
+  >
+    🔄 REFRESH ALL
+  </button>
+
+</div>
+
+<div class="table-wrapper">
+
+  <table>
+
+    <thead>
+
+      <tr>
+
+        <th>DATE</th>
+        <th>PLAYER</th>
+        <th>FREE FIRE UID</th>
+        <th>NICKNAME</th>
+        <th>MOBILE</th>
+        <th>UTR</th>
+        <th>STATUS</th>
+        <th>SLOT</th>
+        <th>ACTION</th>
+
+      </tr>
+
+    </thead>
+
+    <tbody id="playersTableBody">
+
+      <tr>
+
+        <td
+          colspan="9"
+          class="loading"
+        >
+          Loading players...
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
+
+  </div>
+
+  <div
+    style="
+      text-align:center;
+      color:#555;
+      font-size:11px;
+      margin-top:30px;
+    "
+  >
+    FREE FIRE TOURNAMENT ADMIN SYSTEM © 2026
+  </div>
+
+</div>
+
+<script>
+
+  let currentTournament = null;
+  let allTournaments = [];
+  let selectedTournamentId = null;
+
+
+  // ===================================================
+  // FORMAT TIME
+  // ===================================================
+
+  function formatTournamentTime(time) {
+
+    if (!time) {
+      return "---";
+    }
+
+    const parts =
+      String(time).split(":");
+
+    if (parts.length < 2) {
+      return time;
+    }
+
+    const hour =
+      Number(parts[0]);
+
+    const minute =
+      parts[1];
+
+    if (Number.isNaN(hour)) {
+      return time;
+    }
+
+    const suffix =
+      hour >= 12
+        ? "PM"
+        : "AM";
+
+    const displayHour =
+      hour % 12 || 12;
+
+    return (
+      displayHour +
+      ":" +
+      minute +
+      " " +
+      suffix
+    );
+
+  }
+
+
+  // ===================================================
+  // LOAD ALL TOURNAMENTS
+  // ===================================================
+
+  async function loadTournaments(
+    preferredTournamentId = null
+  ) {
+
+    const selector =
+      document.getElementById(
+        "tournamentSelector"
+      );
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/tournaments",
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.status === 401) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to load tournaments"
+        );
+
+      }
+
+      allTournaments =
+        data.tournaments || [];
+
+      selector.innerHTML = "";
+
+      if (
+        allTournaments.length === 0
+      ) {
+
+        selector.innerHTML = `
+          <option value="">
+            No tournaments found
+          </option>
+        `;
+
+        selectedTournamentId = null;
+
+        document.getElementById(
+          "selectedTournamentNote"
+        ).textContent =
+          "Create your first tournament below.";
+
+        return;
+
+      }
+
+      allTournaments.forEach(
+        tournament => {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            tournament._id;
+
+          option.textContent =
+            tournament.name +
+            " • " +
+            tournament.date +
+            " • " +
+            formatTournamentTime(
+              tournament.time
+            );
+
+          selector.appendChild(
+            option
+          );
+
+        }
+      );
+
+      let targetId =
+        preferredTournamentId ||
+        selectedTournamentId;
+
+      const targetExists =
+        allTournaments.some(
+          tournament =>
+            String(tournament._id) ===
+            String(targetId)
+        );
+
+      if (!targetExists) {
+
+        targetId =
+          allTournaments[0]._id;
+
+      }
+
+      selector.value =
+        targetId;
+
+      selectedTournamentId =
+        targetId;
+
+      await loadSelectedTournament();
+
+    } catch (error) {
+
+      console.error(
+        "Tournament list error:",
+        error
+      );
+
+      selector.innerHTML = `
+        <option value="">
+          Unable to load tournaments
+        </option>
+      `;
+
+      document.getElementById(
+        "selectedTournamentNote"
+      ).textContent =
+        error.message;
+
+    }
+
+  }
+
+
+  // ===================================================
+  // SELECT TOURNAMENT
+  // ===================================================
+
+  async function selectTournament(
+    tournamentId
+  ) {
+
+    if (!tournamentId) {
+      return;
+    }
+
+    selectedTournamentId =
+      tournamentId;
+
+    await loadSelectedTournament();
+
+  }
+
+
+  // ===================================================
+  // LOAD SELECTED TOURNAMENT
+  // ===================================================
+
+  async function loadSelectedTournament() {
+
+    if (!selectedTournamentId) {
+      return;
+    }
+
+    const loading =
+      document.getElementById(
+        "tournamentLoading"
+      );
+
+    const details =
+      document.getElementById(
+        "tournamentDetails"
+      );
+
+    loading.textContent =
+      "Loading tournament...";
+
+    loading.classList.remove(
+      "hidden"
+    );
+
+    details.classList.add(
+      "hidden"
+    );
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/tournaments/" +
+          selectedTournamentId,
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.status === 401) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to load selected tournament"
+        );
+
+      }
+
+      currentTournament =
+        data.tournament;
+
+      document.getElementById(
+        "currentTournamentName"
+      ).textContent =
+        currentTournament.name ||
+        "---";
+
+      document.getElementById(
+        "currentDate"
+      ).textContent =
+        currentTournament.date ||
+        "---";
+
+      document.getElementById(
+        "currentTime"
+      ).textContent =
+        formatTournamentTime(
+          currentTournament.time
+        );
+
+      document.getElementById(
+        "currentFee"
+      ).textContent =
+        "₹" +
+        (currentTournament.entryFee ?? 0);
+
+      const statusElement =
+        document.getElementById(
+          "currentStatus"
+        );
+
+      statusElement.textContent =
+        currentTournament.registrationStatus ||
+        "---";
+
+      statusElement.className =
+        currentTournament.registrationStatus ===
+        "OPEN"
+          ? "status-open"
+          : "status-closed";
+
+      document.getElementById(
+        "currentPlayers"
+      ).textContent =
+        currentTournament.verifiedPlayers ??
+        0;
+
+      document.getElementById(
+        "currentSlots"
+      ).textContent =
+        currentTournament.maxSlots ??
+        0;
+
+      document.getElementById(
+        "currentAvailableSlots"
+      ).textContent =
+        currentTournament.availableSlots ??
+        0;
+
+      document.getElementById(
+        "currentRoomId"
+      ).textContent =
+        currentTournament.roomId ||
+        "---";
+
+      document.getElementById(
+        "currentRoomPassword"
+      ).textContent =
+        currentTournament.roomPassword ||
+        "---";
+
+      loading.classList.add(
+        "hidden"
+      );
+
+      details.classList.remove(
+        "hidden"
+      );
+
+      const selectedTournamentNote =
+        document.getElementById(
+          "selectedTournamentNote"
+        );
+
+      selectedTournamentNote.textContent =
+        "Managing: " +
+        currentTournament.name +
+        " | " +
+        currentTournament.date +
+        " | " +
+        formatTournamentTime(
+          currentTournament.time
+        );
+
+      updateDashboardStatus(
+        currentTournament
+      );
+
+      await Promise.all([
+        loadDashboard(),
+        loadPlayers()
+      ]);
+
+    } catch (error) {
+
+      console.error(
+        "Selected tournament error:",
+        error
+      );
+
+      loading.textContent =
+        "Unable to load tournament: " +
+        error.message;
+
+      details.classList.add(
+        "hidden"
+      );
+
+    }
+
+  }
+
+
+  // ===================================================
+  // LOAD DASHBOARD
+  // ===================================================
+
+  async function loadDashboard() {
+
+    if (!selectedTournamentId) {
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/dashboard?tournamentId=" +
+          encodeURIComponent(
+            selectedTournamentId
+          ),
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (response.status === 401) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to load dashboard"
+        );
+
+      }
+
+      const statistics =
+        data.statistics || {};
+
+      document.getElementById(
+        "dashboardTotal"
+      ).textContent =
+        statistics.totalPlayers ?? 0;
+
+      document.getElementById(
+        "dashboardVerified"
+      ).textContent =
+        statistics.verifiedPlayers ?? 0;
+
+      document.getElementById(
+        "dashboardPending"
+      ).textContent =
+        statistics.pendingPlayers ?? 0;
+
+      document.getElementById(
+        "dashboardRejected"
+      ).textContent =
+        statistics.rejectedPlayers ?? 0;
+
+      document.getElementById(
+        "dashboardAvailable"
+      ).textContent =
+        statistics.availableSlots ?? 0;
+
+      if (data.tournament) {
+
+        updateDashboardStatus({
+
+          registrationStatus:
+            data.tournament.registrationStatus,
+
+          tournamentId:
+            data.tournament.id
+
+        });
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Dashboard load error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  // ===================================================
+  // DASHBOARD STATUS
+  // ===================================================
+
+  function updateDashboardStatus(
+    tournament
+  ) {
+
+    const status =
+      tournament.registrationStatus ||
+      "---";
+
+    const statusElement =
+      document.getElementById(
+        "dashboardRegistrationStatus"
+      );
+
+    statusElement.textContent =
+      status;
+
+    if (status === "OPEN") {
+
+      statusElement.style.color =
+        "#00ff88";
+
+    } else {
+
+      statusElement.style.color =
+        "#ff4455";
+
+    }
+
+    const buttons =
+      document.getElementById(
+        "dashboardStatusButtons"
+      );
+
+    if (!tournament.tournamentId &&
+        !tournament.id) {
+
+      buttons.innerHTML = "";
+
+      return;
+
+    }
+
+    if (status === "OPEN") {
+
+      buttons.innerHTML = `
+        <button
+          class="close-btn"
+          onclick="changeTournamentStatus('CLOSED')"
+        >
+          🔒 CLOSE REGISTRATION
+        </button>
+      `;
+
+    } else {
+
+      buttons.innerHTML = `
+        <button
+          class="open-btn"
+          onclick="changeTournamentStatus('OPEN')"
+        >
+          🔓 OPEN REGISTRATION
+        </button>
+      `;
+
+    }
+
+  }
+
+
+  // ===================================================
+  // CHANGE TOURNAMENT STATUS
+  // ===================================================
+
+  async function changeTournamentStatus(
+    newStatus
+  ) {
+
+    if (!currentTournament) {
+
+      alert(
+        "Tournament information is not loaded."
+      );
+
+      return;
+
+    }
+
+    const tournamentId =
+      currentTournament.id ||
+      selectedTournamentId;
+
+    if (!tournamentId) {
+
+      alert(
+        "Tournament ID not found."
+      );
+
+      return;
+
+    }
+
+    const question =
+      newStatus === "OPEN"
+        ? "Are you sure you want to OPEN registration?"
+        : "Are you sure you want to CLOSE registration?";
+
+    if (!confirm(question)) {
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/tournaments/" +
+          tournamentId +
+          "/status",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+                status:
+                  newStatus
+              })
+          }
+        );
+
+      if (response.status === 401) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to change registration status"
+        );
+
+      }
+
+      alert(
+        newStatus === "OPEN"
+          ? "✅ Registration is now OPEN."
+          : "🔒 Registration is now CLOSED."
+      );
+
+      await loadTournaments(
+        selectedTournamentId
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Status change error:",
+        error
+      );
+
+      alert(
+        "❌ " +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  // ===================================================
+  // CREATE TOURNAMENT
+  // ===================================================
+
+  document
+    .getElementById(
+      "tournamentForm"
+    )
+    .addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const message =
+          document.getElementById(
+            "tournamentMessage"
+          );
+
+        const button =
+          this.querySelector(
+            "button[type='submit']"
+          );
+
+        const tournamentName =
+          document
+            .getElementById(
+              "tournamentName"
+            )
+            .value
+            .trim();
+
+        const date =
+          document.getElementById(
+            "tournamentDate"
+          ).value;
+
+        const time =
+          document.getElementById(
+            "tournamentTime"
+          ).value;
+
+        if (!tournamentName) {
+
+          showMessage(
+            "tournamentMessage",
+            "❌ Please enter tournament name.",
+            "error"
+          );
+
+          return;
+
+        }
+
+        if (!date) {
+
+          showMessage(
+            "tournamentMessage",
+            "❌ Please select tournament date.",
+            "error"
+          );
+
+          return;
+
+        }
+
+        if (!time) {
+
+          showMessage(
+            "tournamentMessage",
+            "❌ Please select tournament time.",
+            "error"
+          );
+
+          return;
+
+        }
+
+        button.disabled = true;
+
+        button.textContent =
+          "CREATING...";
+
+        const payload = {
+
+          tournamentName:
+            tournamentName,
+
+          date:
+            date,
+
+          time:
+            time,
+
+          entryFee:
+            Number(
+              document.getElementById(
+                "entryFee"
+              ).value
+            ),
+
+          maxSlots:
+            Number(
+              document.getElementById(
+                "maxSlots"
+              ).value
+            ),
+
+          roomId:
+            document.getElementById(
+              "roomId"
+            ).value.trim(),
+
+          roomPassword:
+            document.getElementById(
+              "roomPassword"
+            ).value.trim(),
+
+          registrationStatus:
+            document.getElementById(
+              "registrationStatus"
+            ).value
+
+        };
+
+        try {
+
+          const response =
+            await fetch(
+              "/api/tournaments",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify(
+                    payload
+                  )
+              }
+            );
+
+          if (
+            response.status ===
+            401
+          ) {
+
+            window.location.href =
+              "/admin/login";
+
+            return;
+
+          }
+
+          const data =
+            await response.json();
+
+          if (
+            !response.ok ||
+            !data.success
+          ) {
+
+            throw new Error(
+              data.message ||
+              "Unable to create tournament"
+            );
+
+          }
+
+          const newTournamentId =
+            data.tournament &&
+            data.tournament._id
+              ? data.tournament._id
+              : null;
+
+          showMessage(
+            "tournamentMessage",
+            "✅ Tournament created successfully!",
+            "success"
+          );
+
+          this.reset();
+
+          document.getElementById(
+            "entryFee"
+          ).value = 10;
+
+          document.getElementById(
+            "maxSlots"
+          ).value = 48;
+
+          document.getElementById(
+            "registrationStatus"
+          ).value = "OPEN";
+
+          await loadTournaments(
+            newTournamentId
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Create tournament error:",
+            error
+          );
+
+          showMessage(
+            "tournamentMessage",
+            "❌ " +
+            error.message,
+            "error"
+          );
+
+        } finally {
+
+          button.disabled =
+            false;
+
+          button.textContent =
+            "🚀 CREATE TOURNAMENT";
+
+        }
+
+      }
+    );
+
+
+  // ===================================================
+  // LOAD PLAYERS
+  // ===================================================
+
+  async function loadPlayers() {
+
+    const tbody =
+      document.getElementById(
+        "playersTableBody"
+      );
+
+    if (!selectedTournamentId) {
+
+      tbody.innerHTML = `
+        <tr>
+          <td
+            colspan="9"
+            class="empty"
+          >
+            Please select a tournament.
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+    tbody.innerHTML = `
+      <tr>
+        <td
+          colspan="9"
+          class="loading"
+        >
+          Loading players...
+        </td>
+      </tr>
+    `;
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/players?tournamentId=" +
+          encodeURIComponent(
+            selectedTournamentId
+          ),
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (
+        response.status ===
+        401
+      ) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to load players"
+        );
+
+      }
+
+      const players =
+        data.players || [];
+
+      if (
+        players.length === 0
+      ) {
+
+        tbody.innerHTML = `
+          <tr>
+            <td
+              colspan="9"
+              class="empty"
+            >
+              No player registrations for this tournament yet.
+            </td>
+          </tr>
+        `;
+
+        return;
+
+      }
+
+      tbody.innerHTML =
+        players
+          .map(
+            player =>
+              createPlayerRow(
+                player
+              )
+          )
+          .join("");
+
+    } catch (error) {
+
+      console.error(
+        "Players load error:",
+        error
+      );
+
+      tbody.innerHTML = `
+        <tr>
+          <td
+            colspan="9"
+            class="empty"
+          >
+            Unable to load players.
+          </td>
+        </tr>
+      `;
+
+    }
+
+  }
+
+
+  // ===================================================
+  // CREATE PLAYER ROW
+  // ===================================================
+
+  function createPlayerRow(
+    player
+  ) {
+
+    const date =
+      player.createdAt
+        ? new Date(
+            player.createdAt
+          ).toLocaleString(
+            "en-IN"
+          )
+        : "---";
+
+    let statusHTML = "";
+
+    if (
+      player.paymentStatus ===
+      "PENDING"
+    ) {
+
+      statusHTML = `
+        <span
+          class="badge-status pending"
+        >
+          PENDING
+        </span>
+      `;
+
+    } else if (
+      player.paymentStatus ===
+      "VERIFIED"
+    ) {
+
+      statusHTML = `
+        <span
+          class="badge-status verified"
+        >
+          VERIFIED
+        </span>
+      `;
+
+    } else {
+
+      statusHTML = `
+        <span
+          class="badge-status rejected"
+        >
+          REJECTED
+        </span>
+      `;
+
+    }
+
+    let slotHTML =
+      '<span style="color:#555;">—</span>';
+
+    if (
+      player.slotNumber
+    ) {
+
+      slotHTML = `
+        <span class="slot">
+          #${player.slotNumber}
+        </span>
+      `;
+
+    }
+
+    let actionHTML =
+      '<span style="color:#555;">—</span>';
+
+    if (
+      player.paymentStatus ===
+      "PENDING"
+    ) {
+
+      actionHTML = `
+        <div style="
+          display:flex;
+          gap:7px;
+          flex-wrap:wrap;
+        ">
+
+          <button
+            class="verify-btn"
+            onclick="verifyPlayer('${player._id}')"
+          >
+            ✓ VERIFY
+          </button>
+
+          <button
+            class="reject-btn"
+            onclick="rejectPlayer('${player._id}')"
+          >
+            ✕ REJECT
+          </button>
+
+        </div>
+      `;
+
+    } else if (
+      player.paymentStatus ===
+      "VERIFIED"
+    ) {
+
+      actionHTML = `
+        <span style="
+          color:#00ff88;
+          font-size:11px;
+        ">
+          PAYMENT VERIFIED
+        </span>
+      `;
+
+    } else {
+
+      actionHTML = `
+        <span style="
+          color:#ff5267;
+          font-size:11px;
+        ">
+          PAYMENT REJECTED
+        </span>
+      `;
+
+    }
+
+    return `
+      <tr>
+
+        <td>
+          ${escapeHTML(date)}
+        </td>
+
+        <td>
+          <strong>
+            ${escapeHTML(
+              player.playerName
+            )}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHTML(
+            player.freeFireUID
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            player.nickname
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            player.mobile
+          )}
+        </td>
+
+        <td>
+          <span class="utr">
+            ${escapeHTML(
+              player.utr
+            )}
+          </span>
+        </td>
+
+        <td>
+          ${statusHTML}
+        </td>
+
+        <td>
+          ${slotHTML}
+        </td>
+
+        <td>
+          ${actionHTML}
+        </td>
+
+      </tr>
+    `;
+
+  }
+
+
+  // ===================================================
+  // VERIFY PLAYER
+  // ===================================================
+
+  async function verifyPlayer(
+    playerId
+  ) {
+
+    const confirmVerify =
+      confirm(
+        "Are you sure you want to VERIFY this player's payment?"
+      );
+
+    if (!confirmVerify) {
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/players/" +
+          playerId +
+          "/verify",
+          {
+            method: "POST"
+          }
+        );
+
+      if (
+        response.status ===
+        401
+      ) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to verify player"
+        );
+
+      }
+
+      let message =
+        "✅ Payment verified successfully!\n\n" +
+        "Assigned Slot: #" +
+        data.slotNumber;
+
+      if (
+        data.registrationStatus ===
+        "CLOSED"
+      ) {
+
+        message +=
+          "\n\n🔒 All slots are full.\nRegistration has been automatically CLOSED.";
+
+      }
+
+      alert(message);
+
+      await loadTournaments(
+        selectedTournamentId
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+      alert(
+        "❌ " +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  // ===================================================
+  // REJECT PLAYER
+  // ===================================================
+
+  async function rejectPlayer(
+    playerId
+  ) {
+
+    const confirmReject =
+      confirm(
+        "Are you sure you want to REJECT this payment?"
+      );
+
+    if (!confirmReject) {
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/admin/players/" +
+          playerId +
+          "/reject",
+          {
+            method: "POST"
+          }
+        );
+
+      if (
+        response.status ===
+        401
+      ) {
+
+        window.location.href =
+          "/admin/login";
+
+        return;
+
+      }
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.message ||
+          "Unable to reject player"
+        );
+
+      }
+
+      alert(
+        "❌ Payment rejected."
+      );
+
+      await loadTournaments(
+        selectedTournamentId
+      );
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+      alert(
+        "❌ " +
+        error.message
+      );
+
+    }
+
+  }
+
+
+  // ===================================================
+  // REFRESH EVERYTHING
+  // ===================================================
+
+  async function refreshEverything() {
+
+    if (!selectedTournamentId) {
+
+      await loadTournaments();
+
+      return;
+
+    }
+
+    await loadTournaments(
+      selectedTournamentId
+    );
+
+  }
+
+
+  // ===================================================
+  // LOGOUT
+  // ===================================================
+
+  function logout() {
+
+    window.location.href =
+      "/admin/logout";
+
+  }
+
+
+  // ===================================================
+  // MESSAGE
+  // ===================================================
+
+  function showMessage(
+    elementId,
+    message,
+    type
+  ) {
+
+    const element =
+      document.getElementById(
+        elementId
+      );
+
+    element.textContent =
+      message;
+
+    element.className =
+      "message " +
+      type;
+
+  }
+
+
+  // ===================================================
+  // HTML ESCAPE
+  // ===================================================
+
+  function escapeHTML(
+    value
+  ) {
+
+    const div =
+      document.createElement(
+        "div"
+      );
+
+    div.textContent =
+      value === undefined ||
+      value === null
+        ? ""
+        : value;
+
+    return div.innerHTML;
+
+  }
+
+
+  // ===================================================
+  // START
+  // ===================================================
+
+  loadTournaments();
+
+</script>
+
+</body>
+</html>
