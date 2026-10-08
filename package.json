@@ -1,0 +1,17 @@
+{
+  "name": "freefire-tournament",
+  "version": "1.0.0",
+  "description": "Free Fire Tournament Registration System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.8.4",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "bcryptjs": "^2.4.3",
+    "express-session": "^1.18.1"
+  }
+}
