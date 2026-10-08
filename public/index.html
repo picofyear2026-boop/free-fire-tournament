@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Free Fire Tournament</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+
+    background:
+        radial-gradient(circle at top left, rgba(0,255,255,.12), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255,0,180,.12), transparent 35%),
+        #050509;
+
+    color: white;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    background-image:
+        linear-gradient(rgba(0,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,.05) 1px, transparent 1px);
+
+    background-size: 40px 40px;
+
+    pointer-events: none;
+    z-index: -1;
+}
+
+.container {
+    width: min(100% - 30px, 900px);
+    margin: auto;
+    padding: 25px 0 50px;
+}
+
+/* ================= HEADER ================= */
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+
+    object-fit: contain;
+
+    filter: drop-shadow(0 0 18px #00ffff);
+
+    margin-bottom: 15px;
+}
+
+.badge {
+    display: inline-block;
+
+    padding: 8px 16px;
+
+    border: 1px solid #00ffff;
+    border-radius: 30px;
+
+    color: #00ffff;
+
+    box-shadow: 0 0 15px rgba(0,255,255,.35);
+
+    font-size: 12px;
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 15px;
+}
+
+h1 {
+    font-size: clamp(30px, 7vw, 60px);
+
+    color: #00ffff;
+
+    text-shadow: 0 0 15px #00ffff;
+}
+
+.subtitle {
+    margin-top: 8px;
+
+    color: #ff38d1;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    text-shadow: 0 0 10px #ff38d1;
+}
+
+/* ================= CARD ================= */
+
+.card {
+    background: rgba(10, 10, 20, .88);
+
+    border: 1px solid rgba(0,255,255,.45);
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    margin-top: 20px;
+
+    box-shadow:
+        0 0 25px rgba(0,255,255,.12),
+        inset 0 0 20px rgba(255,0,200,.04);
+}
+
+.card h2 {
+    color: #00ffff;
+
+    margin-bottom: 18px;
+
+    text-shadow: 0 0 10px #00ffff;
+}
+
+/* ================= INFO GRID ================= */
+
+.info-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+}
+
+.info-box {
+    padding: 15px;
+
+    border: 1px solid rgba(255,255,255,.12);
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,.03);
+}
+
+.info-label {
+    color: #aaa;
+
+    font-size: 12px;
+
+    margin-bottom: 6px;
+}
+
+.info-value {
+    font-size: 18px;
+
+    font-weight: bold;
+
+    color: white;
+
+    word-break: break-word;
+}
+
+.open {
+    color: #00ff88;
+}
+
+.closed {
+    color: #ff3d5a;
+}
+
+/* ================= BUTTON ================= */
+
+button {
+    width: 100%;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    margin-top: 18px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    color: black;
+
+    background: linear-gradient(90deg, #00ffff, #00ff88);
+
+    box-shadow: 0 0 18px rgba(0,255,255,.35);
+
+    transition: .2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 0 28px rgba(0,255,255,.6);
+}
+
+button:disabled {
+    opacity: .5;
+
+    cursor: not-allowed;
+
+    transform: none;
+}
+
+.secondary-btn {
+    background: linear-gradient(90deg, #ff38d1, #9b5cff);
+
+    color: white;
+}
+
+.danger-btn {
+    background: linear-gradient(90deg, #ff405f, #ff0055);
+
+    color: white;
+}
+
+/* ================= INPUT ================= */
+
+input {
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 7px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(0,255,255,.35);
+
+    outline: none;
+
+    background: #080811;
+
+    color: white;
+
+    font-size: 15px;
+}
+
+input:focus {
+    border-color: #00ffff;
+
+    box-shadow: 0 0 12px rgba(0,255,255,.25);
+}
+
+label {
+    display: block;
+
+    margin-top: 15px;
+
+    color: #ddd;
+
+    font-size: 13px;
+}
+
+/* ================= QR ================= */
+
+.qr-box {
+    text-align: center;
+
+    margin: 20px 0;
+}
+
+.qr-box img {
+    width: 220px;
+
+    max-width: 80%;
+
+    border-radius: 12px;
+
+    border: 2px solid #00ffff;
+
+    box-shadow: 0 0 25px rgba(0,255,255,.3);
+}
+
+.note {
+    color: #aaa;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    margin-top: 10px;
+}
+
+/* ================= MESSAGE ================= */
+
+.message {
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    line-height: 1.5;
+
+    font-size: 14px;
+}
+
+.success {
+    display: block;
+
+    background: rgba(0,255,120,.08);
+
+    border: 1px solid #00ff88;
+
+    color: #00ff88;
+}
+
+.error {
+    display: block;
+
+    background: rgba(255,40,80,.08);
+
+    border: 1px solid #ff405f;
+
+    color: #ff7085;
+}
+
+.pending {
+    display: block;
+
+    background: rgba(255,200,0,.08);
+
+    border: 1px solid #ffc400;
+
+    color: #ffd84d;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================= STATUS ================= */
+
+.status-card {
+    border-color: #ff38d1;
+
+    box-shadow:
+        0 0 25px rgba(255,0,200,.15);
+}
+
+.status-header {
+    text-align: center;
+
+    margin-bottom: 18px;
+}
+
+.status-icon {
+    font-size: 55px;
+
+    margin-bottom: 8px;
+}
+
+.status-title {
+    font-size: 25px;
+
+    font-weight: bold;
+}
+
+/* ================= PLAYER DASHBOARD ================= */
+
+.player-dashboard {
+    border-color: #00ff88;
+
+    box-shadow:
+        0 0 30px rgba(0,255,136,.16),
+        inset 0 0 25px rgba(0,255,136,.03);
+}
+
+.player-header {
+    text-align: center;
+
+    margin-bottom: 20px;
+}
+
+.player-header .icon {
+    font-size: 50px;
+
+    margin-bottom: 8px;
+}
+
+.player-header h2 {
+    color: #00ff88;
+
+    text-shadow: 0 0 12px #00ff88;
+}
+
+.player-header p {
+    color: #aaa;
+
+    font-size: 13px;
+}
+
+.player-info-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 12px;
+}
+
+.player-info-box {
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,.035);
+
+    border: 1px solid rgba(0,255,136,.2);
+}
+
+.player-info-label {
+    color: #999;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
+
+    margin-bottom: 7px;
+}
+
+.player-info-value {
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    word-break: break-word;
+}
+
+/* ================= ROOM ================= */
+
+.room-box {
+    margin-top: 20px;
+
+    padding: 20px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,255,255,.07),
+            rgba(255,0,200,.05)
+        );
+
+    border: 1px solid #00ffff;
+
+    box-shadow:
+        0 0 20px rgba(0,255,255,.15);
+}
+
+.room-title {
+    text-align: center;
+
+    color: #00ffff;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+}
+
+.room-item {
+    margin: 12px 0;
+
+    padding: 13px;
+
+    border-radius: 10px;
+
+    background: rgba(0,0,0,.25);
+
+    font-size: 16px;
+}
+
+.room-item span {
+    color: #00ffff;
+
+    font-weight: bold;
+
+    float: right;
+
+    margin-left: 10px;
+}
+
+.slot-highlight {
+    text-align: center;
+
+    padding: 18px;
+
+    margin-bottom: 15px;
+
+    border-radius: 12px;
+
+    border: 1px solid #ff38d1;
+
+    background: rgba(255,0,200,.07);
+}
+
+.slot-label {
+    color: #aaa;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+}
+
+.slot-number {
+    display: block;
+
+    color: #ff38d1;
+
+    font-size: 42px;
+
+    font-weight: bold;
+
+    text-shadow: 0 0 15px #ff38d1;
+
+    margin-top: 5px;
+}
+
+/* ================= PENDING ================= */
+
+.pending-card {
+    border-color: #ffc400;
+
+    box-shadow:
+        0 0 25px rgba(255,196,0,.12);
+}
+
+.pending-card h2 {
+    color: #ffd84d;
+
+    text-shadow: 0 0 10px #ffc400;
+}
+
+/* ================= REJECTED ================= */
+
+.rejected-card {
+    border-color: #ff405f;
+
+    box-shadow:
+        0 0 25px rgba(255,40,80,.14);
+}
+
+.rejected-card h2 {
+    color: #ff506b;
+
+    text-shadow: 0 0 10px #ff405f;
+}
+
+/* ================= FOOTER ================= */
+
+footer {
+    text-align: center;
+
+    color: #666;
+
+    margin-top: 35px;
+
+    font-size: 12px;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+    .info-grid,
+    .player-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .logo {
+        width: 95px;
+        height: 95px;
+    }
+
+    h1 {
+        font-size: 34px;
+    }
+
+    .room-item span {
+        float: none;
+
+        display: block;
+
+        margin: 5px 0 0;
+    }
+
+    .slot-number {
+        font-size: 36px;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- ================= HEADER ================= -->
+
+<div class="header">
+
+<img
+    src="images/tournament-logo.png"
+    class="logo"
+    alt="Tournament Logo"
+>
+
+<div class="badge">
+    ⚡ DAILY ESPORTS EVENT ⚡
+</div>
+
+<h1>
+    FREE FIRE TOURNAMENT
+</h1>
+
+<div class="subtitle">
+    DAILY FREE FIRE BATTLE
+</div>
+
+</div>
+
+<!-- ================= TOURNAMENT DETAILS ================= -->
+
+<div class="card" id="tournamentCard">
+
+<h2>
+    🔥 Tournament Details
+</h2>
+
+<div class="info-grid">
+
+    <div class="info-box">
+
+        <div class="info-label">
+            Tournament
+        </div>
+
+        <div
+            class="info-value"
+            id="tournamentName"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <div class="info-label">
+            Date
+        </div>
+
+        <div
+            class="info-value"
+            id="tournamentDate"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <div class="info-label">
+            Time
+        </div>
+
+        <div
+            class="info-value"
+            id="tournamentTime"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <div class="info-label">
+            Entry Fee
+        </div>
+
+        <div
+            class="info-value"
+            id="entryFee"
+        >
+            ₹10
+        </div>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <div class="info-label">
+            Slots
+        </div>
+
+        <div
+            class="info-value"
+            id="slots"
+        >
+            0 / 48
+        </div>
+
+    </div>
+
+
+    <div class="info-box">
+
+        <div class="info-label">
+            Registration
+        </div>
+
+        <div
+            class="info-value"
+            id="registrationStatus"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+</div>
+
+
+<button id="registerButton">
+    🎮 REGISTER NOW
+</button>
+
+</div>
+
+<!-- ================= REGISTRATION ================= -->
+
+<div
+    class="card hidden"
+    id="registrationCard"
+>
+
+<h2>
+    📝 Player Registration
+</h2>
+
+
+<form id="registrationForm">
+
+    <label>
+
+        Player Name
+
+        <input
+            type="text"
+            id="playerName"
+            placeholder="Enter your name"
+            required
+        >
+
+    </label>
+
+
+    <label>
+
+        Free Fire UID
+
+        <input
+            type="text"
+            id="freeFireUID"
+            placeholder="Enter Free Fire UID"
+            required
+        >
+
+    </label>
+
+
+    <label>
+
+        Free Fire Nickname
+
+        <input
+            type="text"
+            id="nickname"
+            placeholder="Enter nickname"
+            required
+        >
+
+    </label>
+
+
+    <label>
+
+        Mobile Number
+
+        <input
+            type="tel"
+            id="mobile"
+            placeholder="Enter mobile number"
+            required
+        >
+
+    </label>
+
+
+    <div class="qr-box">
+
+        <h2>
+            💳 Pay ₹
+            <span id="paymentAmount">
+                10
+            </span>
+        </h2>
+
+
+        <img
+            src="images/upi-qr.png"
+            alt="UPI QR Code"
+        >
+
+
+        <div class="note">
+
+            Scan the QR code and pay the tournament entry fee.
+
+            After payment, enter your UTR /
+            Transaction ID below.
+
+        </div>
+
+    </div>
+
+
+    <label>
+
+        UTR / Transaction ID
+
+        <input
+            type="text"
+            id="utr"
+            placeholder="Enter UTR / Transaction ID"
+            required
+        >
+
+    </label>
+
+
+    <button
+        type="submit"
+        id="submitButton"
+    >
+        🚀 SUBMIT REGISTRATION
+    </button>
+
+</form>
+
+
+<div
+    id="registrationMessage"
+    class="message"
+></div>
+
+</div>
+
+<!-- ================= PLAYER STATUS ================= -->
+
+<div
+    class="card hidden"
+    id="statusCard"
+>
+
+<div class="status-header">
+
+    <div class="status-icon">
+        🔎
+    </div>
+
+    <div class="status-title">
+        PAYMENT STATUS
+    </div>
+
+</div>
+
+
+<p class="note" id="statusDescription">
+
+    Your registration has been submitted.
+
+    Payment verification is done manually
+    by the Admin.
+
+</p>
+
+
+<button
+    type="button"
+    id="checkStatusButton"
+    class="secondary-btn"
+>
+    🔄 CHECK PAYMENT STATUS
+</button>
+
+
+<div
+    id="statusMessage"
+    class="message"
+></div>
+
+</div>
+
+<!-- ================= PENDING CARD ================= -->
+
+<div
+    class="card pending-card hidden"
+    id="pendingCard"
+>
+
+<div class="status-header">
+
+    <div class="status-icon">
+        ⏳
+    </div>
+
+    <h2>
+        PAYMENT PENDING
+    </h2>
+
+    <p class="note">
+
+        Your registration is safe.
+
+        The Admin is checking your payment.
+
+    </p>
+
+</div>
+
+
+<div class="message pending">
+
+    ⏳ Your payment has not been verified yet.
+
+    Please wait for Admin verification.
+
+</div>
+
+
+<div class="player-info-grid">
+
+    <div class="player-info-box">
+
+        <div class="player-info-label">
+            Player Name
+        </div>
+
+        <div
+            class="player-info-value"
+            id="pendingPlayerName"
+        >
+            -
+        </div>
+
+    </div>
+
+
+    <div class="player-info-box">
+
+        <div class="player-info-label">
+            Free Fire UID
+        </div>
+
+        <div
+            class="player-info-value"
+            id="pendingUID"
+        >
+            -
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<!-- ================= VERIFIED DASHBOARD ================= -->
+
+<div
+    class="card player-dashboard hidden"
+    id="verifiedCard"
+>
+
+<div class="player-header">
+
+    <div class="icon">
+        🏆
+    </div>
+
+    <h2>
+        PAYMENT VERIFIED
+    </h2>
+
+    <p>
+        Congratulations! Your tournament entry is confirmed.
+    </p>
+
+</div>
+
+
+<!-- SLOT -->
+
+<div class="slot-highlight">
+
+    <div class="slot-label">
+        YOUR SLOT NUMBER
+    </div>
+
+    <span
+        class="slot-number"
+        id="playerSlot"
+    >
+        -
+    </span>
+
+</div>
+
+
+<!-- PLAYER DETAILS -->
+
+<div class="player-info-grid">
+
+    <div class="player-info-box">
+
+        <div class="player-info-label">
+            Player Name
+        </div>
+
+        <div
+            class="player-info-value"
+            id="verifiedPlayerName"
+        >
+            -
+        </div>
+
+    </div>
+
+
+    <div class="player-info-box">
+
+        <div class="player-info-label">
+            Free Fire UID
+        </div>
+
+        <div
+            class="player-info-value"
+            id="verifiedUID"
+        >
+            -
+        </div>
+
+    </div>
+
+
+    <div class="player-info-box">
+
+        <div class="player-info-label">
+            Nickname
+        </div>
+
+        <div
+            class="player-info-value"
+            id="verifiedNickname"
+        >
+            -
+        </div>
+
+    </div>
+
+
+    <div class="player-info-box">
+
+        <div class="player-info-label">
+            Mobile
+        </div>
+
+        <div
+            class="player-info-value"
+            id="verifiedMobile"
+        >
+            -
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TOURNAMENT -->
+
+<div class="room-box">
+
+    <div class="room-title">
+        🎮 TOURNAMENT INFORMATION
+    </div>
+
+
+    <div class="room-item">
+
+        Tournament
+
+        <span id="verifiedTournamentName">
+            -
+        </span>
+
+    </div>
+
+
+    <div class="room-item">
+
+        Date
+
+        <span id="verifiedTournamentDate">
+            -
+        </span>
+
+    </div>
+
+
+    <div class="room-item">
+
+        Time
+
+        <span id="verifiedTournamentTime">
+            -
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- ROOM -->
+
+<div class="room-box">
+
+    <div class="room-title">
+        🔐 ROOM DETAILS
+    </div>
+
+
+    <div class="room-item">
+
+        Room ID
+
+        <span id="roomId">
+            -
+        </span>
+
+    </div>
+
+
+    <div class="room-item">
+
+        Room Password
+
+        <span id="roomPassword">
+            -
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="message success">
+
+    ✅ Payment verified successfully.
+
+    Keep your Slot Number, Room ID and Password safe.
+
+</div>
+
+
+<p class="note">
+
+    ⚠️ Do not share your Room ID and Password publicly.
+
+    Join the room at the tournament time.
+
+</p>
+
+</div>
+
+<!-- ================= REJECTED ================= -->
+
+<div
+    class="card rejected-card hidden"
+    id="rejectedCard"
+>
+
+<div class="status-header">
+
+    <div class="status-icon">
+        ❌
+    </div>
+
+    <h2>
+        PAYMENT REJECTED
+    </h2>
+
+    <p class="note">
+
+        Your payment was rejected by the Admin.
+
+    </p>
+
+</div>
+
+
+<div class="message error">
+
+    ❌ Your payment could not be verified.
+
+    Please contact the tournament Admin if you believe this is a mistake.
+
+</div>
+
+</div>
+
+<footer>
+
+© Free Fire Tournament • Daily Esports Battle
+
+</footer>
+
+</div>
+
+<script>
+
+/* ==========================================
+   GLOBAL VARIABLES
+========================================== */
+
+let currentTournament = null;
+
+let accessToken =
+    localStorage.getItem("ff_access_token");
+
+let autoCheckTimer = null;
+
+
+/* ==========================================
+   DOM ELEMENTS
+========================================== */
+
+const tournamentName =
+    document.getElementById("tournamentName");
+
+const tournamentDate =
+    document.getElementById("tournamentDate");
+
+const tournamentTime =
+    document.getElementById("tournamentTime");
+
+const entryFee =
+    document.getElementById("entryFee");
+
+const slots =
+    document.getElementById("slots");
+
+const registrationStatus =
+    document.getElementById("registrationStatus");
+
+const registerButton =
+    document.getElementById("registerButton");
+
+const registrationCard =
+    document.getElementById("registrationCard");
+
+const statusCard =
+    document.getElementById("statusCard");
+
+const pendingCard =
+    document.getElementById("pendingCard");
+
+const verifiedCard =
+    document.getElementById("verifiedCard");
+
+const rejectedCard =
+    document.getElementById("rejectedCard");
+
+const registrationForm =
+    document.getElementById("registrationForm");
+
+const registrationMessage =
+    document.getElementById("registrationMessage");
+
+const checkStatusButton =
+    document.getElementById("checkStatusButton");
+
+const statusMessage =
+    document.getElementById("statusMessage");
+
+
+/* ==========================================
+   FORMAT TIME
+========================================== */
+
+function formatTournamentTime(time) {
+
+    if (!time) {
+        return "-";
+    }
+
+    const parts = time.split(":");
+
+    if (parts.length < 2) {
+        return time;
+    }
+
+    let hour = Number(parts[0]);
+
+    const minute = parts[1];
+
+    const ampm = hour >= 12 ? "PM" : "AM";
+
+    hour = hour % 12;
+
+    if (hour === 0) {
+        hour = 12;
+    }
+
+    return `${hour}:${minute} ${ampm}`;
+}
+
+
+/* ==========================================
+   LOAD LATEST TOURNAMENT
+========================================== */
+
+async function loadTournament() {
+
+    try {
+
+        const response =
+            await fetch("/api/tournaments/latest", {
+                cache: "no-store"
+            });
+
+        const data =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load tournament"
+            );
+
+        }
+
+        currentTournament = data;
+
+
+        tournamentName.textContent =
+            data.name ||
+            data.tournamentName ||
+            "Free Fire Tournament";
+
+
+        tournamentDate.textContent =
+            data.date || "-";
+
+
+        tournamentTime.textContent =
+            formatTournamentTime(data.time);
+
+
+        entryFee.textContent =
+            "₹" + (data.entryFee || 10);
+
+
+        slots.textContent =
+            `${data.registeredPlayers || 0} / ${data.maxSlots || 48}`;
+
+
+        /* =========================
+           REGISTRATION STATUS
+        ========================= */
+
+        if (data.registrationStatus === "OPEN") {
+
+            registrationStatus.textContent =
+                "OPEN";
+
+            registrationStatus.className =
+                "info-value open";
+
+
+            registerButton.disabled = false;
+
+            registerButton.textContent =
+                "🎮 REGISTER NOW";
+
+        } else {
+
+            registrationStatus.textContent =
+                "CLOSED";
+
+            registrationStatus.className =
+                "info-value closed";
+
+
+            registerButton.disabled = true;
+
+            registerButton.textContent =
+                "REGISTRATION CLOSED";
+        }
+
+
+        document.getElementById(
+            "paymentAmount"
+        ).textContent =
+            data.entryFee || 10;
+
+
+    } catch (error) {
+
+        console.error(
+            "Tournament loading error:",
+            error
+        );
+
+
+        tournamentName.textContent =
+            "Unable to load";
+
+
+        registrationStatus.textContent =
+            "SERVER ERROR";
+
+
+        registrationStatus.className =
+            "info-value closed";
+
+
+        registrationMessage.className =
+            "message error";
+
+
+        registrationMessage.textContent =
+            "Unable to connect to tournament server.";
+
+    }
+
+}
+
+
+/* ==========================================
+   REGISTER BUTTON
+========================================== */
+
+registerButton.addEventListener(
+    "click",
+    function () {
+
+        if (!currentTournament) {
+
+            alert(
+                "Tournament is still loading. Please wait."
+            );
+
+            return;
+        }
+
+
+        if (
+            currentTournament.registrationStatus !==
+            "OPEN"
+        ) {
+
+            alert(
+                "Registration is currently closed."
+            );
+
+            return;
+        }
+
+
+        registrationCard.classList.remove(
+            "hidden"
+        );
+
+
+        registrationCard.scrollIntoView({
+            behavior: "smooth"
+        });
+
+    }
+);
+
+
+/* ==========================================
+   REGISTRATION SUBMIT
+========================================== */
+
+registrationForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const submitButton =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        submitButton.disabled = true;
+
+        submitButton.textContent =
+            "⏳ SUBMITTING...";
+
+
+        registrationMessage.className =
+            "message";
+
+        registrationMessage.textContent =
+            "";
+
+
+        const playerData = {
+
+            playerName:
+                document.getElementById(
+                    "playerName"
+                ).value.trim(),
+
+            freeFireUID:
+                document.getElementById(
+                    "freeFireUID"
+                ).value.trim(),
+
+            nickname:
+                document.getElementById(
+                    "nickname"
+                ).value.trim(),
+
+            mobile:
+                document.getElementById(
+                    "mobile"
+                ).value.trim(),
+
+            utr:
+                document.getElementById(
+                    "utr"
+                ).value.trim()
+
+        };
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/players/register",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                playerData
+                            )
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message ||
+                    "Registration failed"
+                );
+
+            }
+
+
+            /* =========================
+               SAVE ACCESS TOKEN
+            ========================= */
+
+            if (data.accessToken) {
+
+                accessToken =
+                    data.accessToken;
+
+
+                localStorage.setItem(
+                    "ff_access_token",
+                    accessToken
+                );
+
+            }
+
+
+            /* =========================
+               SUCCESS
+            ========================= */
+
+            registrationMessage.className =
+                "message success";
+
+
+            registrationMessage.innerHTML =
+                "✅ Registration submitted successfully!<br>" +
+                "⏳ Your payment is now waiting for Admin verification.";
+
+
+            /* =========================
+               SHOW STATUS
+            ========================= */
+
+            statusCard.classList.remove(
+                "hidden"
+            );
+
+
+            pendingCard.classList.remove(
+                "hidden"
+            );
+
+
+            document.getElementById(
+                "pendingPlayerName"
+            ).textContent =
+                playerData.playerName;
+
+
+            document.getElementById(
+                "pendingUID"
+            ).textContent =
+                playerData.freeFireUID;
+
+
+            statusCard.scrollIntoView({
+                behavior: "smooth"
+            });
+
+
+            /* =========================
+               DISABLE FORM
+            ========================= */
+
+            submitButton.disabled = true;
+
+            submitButton.textContent =
+                "✅ REGISTRATION SUBMITTED";
+
+
+            /* =========================
+               START AUTO CHECK
+            ========================= */
+
+            startAutoStatusCheck();
+
+
+        } catch (error) {
+
+            console.error(
+                "Registration error:",
+                error
+            );
+
+
+            registrationMessage.className =
+                "message error";
+
+
+            registrationMessage.textContent =
+                error.message ||
+                "Registration failed.";
+
+
+            submitButton.disabled = false;
+
+            submitButton.textContent =
+                "🚀 SUBMIT REGISTRATION";
+
+        }
+
+    }
+);
+
+
+/* ==========================================
+   HIDE ALL STATUS CARDS
+========================================== */
+
+function hideStatusCards() {
+
+    pendingCard.classList.add("hidden");
+
+    verifiedCard.classList.add("hidden");
+
+    rejectedCard.classList.add("hidden");
+
+}
+
+
+/* ==========================================
+   SHOW VERIFIED DASHBOARD
+========================================== */
+
+function showVerifiedPlayer(data) {
+
+    hideStatusCards();
+
+
+    /* =========================
+       PLAYER DETAILS
+    ========================= */
+
+    document.getElementById(
+        "verifiedPlayerName"
+    ).textContent =
+        data.playerName || "-";
+
+
+    document.getElementById(
+        "verifiedUID"
+    ).textContent =
+        data.freeFireUID || "-";
+
+
+    document.getElementById(
+        "verifiedNickname"
+    ).textContent =
+        data.nickname || "-";
+
+
+    document.getElementById(
+        "verifiedMobile"
+    ).textContent =
+        data.mobile || "-";
+
+
+    /* =========================
+       SLOT
+    ========================= */
+
+    document.getElementById(
+        "playerSlot"
+    ).textContent =
+        data.slotNumber || "-";
+
+
+    /* =========================
+       TOURNAMENT
+    ========================= */
+
+    document.getElementById(
+        "verifiedTournamentName"
+    ).textContent =
+        data.tournamentName ||
+        currentTournament?.name ||
+        "-";
+
+
+    document.getElementById(
+        "verifiedTournamentDate"
+    ).textContent =
+        data.tournamentDate ||
+        currentTournament?.date ||
+        "-";
+
+
+    document.getElementById(
+        "verifiedTournamentTime"
+    ).textContent =
+        formatTournamentTime(
+            data.tournamentTime ||
+            currentTournament?.time
+        );
+
+
+    /* =========================
+       ROOM
+    ========================= */
+
+    document.getElementById(
+        "roomId"
+    ).textContent =
+        data.roomId || "-";
+
+
+    document.getElementById(
+        "roomPassword"
+    ).textContent =
+        data.roomPassword || "-";
+
+
+    /* =========================
+       SHOW
+    ========================= */
+
+    verifiedCard.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* ==========================================
+   SHOW PENDING
+========================================== */
+
+function showPendingPlayer(data) {
+
+    hideStatusCards();
+
+
+    statusCard.classList.remove(
+        "hidden"
+    );
+
+
+    pendingCard.classList.remove(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "pendingPlayerName"
+    ).textContent =
+        data.playerName || "-";
+
+
+    document.getElementById(
+        "pendingUID"
+    ).textContent =
+        data.freeFireUID || "-";
+
+
+    statusMessage.className =
+        "message pending";
+
+
+    statusMessage.textContent =
+        "⏳ Your payment is still waiting for Admin verification.";
+
+}
+
+
+/* ==========================================
+   SHOW REJECTED
+========================================== */
+
+function showRejectedPlayer(data) {
+
+    hideStatusCards();
+
+
+    statusCard.classList.remove(
+        "hidden"
+    );
+
+
+    rejectedCard.classList.remove(
+        "hidden"
+    );
+
+
+    statusMessage.className =
+        "message error";
+
+
+    statusMessage.textContent =
+        "❌ Your payment was rejected by Admin.";
+
+}
+
+
+/* ==========================================
+   CHECK PAYMENT STATUS
+========================================== */
+
+async function checkPaymentStatus(
+    showLoading = true
+) {
+
+    if (!accessToken) {
+
+        statusMessage.className =
+            "message error";
+
+        statusMessage.textContent =
+            "Registration token not found. Please register again.";
+
+        return;
+
+    }
+
+
+    if (showLoading) {
+
+        checkStatusButton.disabled = true;
+
+        checkStatusButton.textContent =
+            "⏳ CHECKING...";
+
+        statusMessage.className =
+            "message pending";
+
+        statusMessage.textContent =
+            "Checking payment verification...";
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/player/access/" +
+                encodeURIComponent(
+                    accessToken
+                ),
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Payment status response:",
+            data
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.message ||
+                "Unable to check payment status"
+            );
+
+        }
+
+
+        /* =========================
+           PENDING
+        ========================= */
+
+        if (data.status === "PENDING") {
+
+            showPendingPlayer(data);
+
+            return;
+        }
+
+
+        /* =========================
+           REJECTED
+        ========================= */
+
+        if (data.status === "REJECTED") {
+
+            showRejectedPlayer(data);
+
+            stopAutoStatusCheck();
+
+            return;
+        }
+
+
+        /* =========================
+           VERIFIED
+        ========================= */
+
+        if (data.status === "VERIFIED") {
+
+            showVerifiedPlayer(data);
+
+            stopAutoStatusCheck();
+
+
+            statusMessage.className =
+                "message success";
+
+
+            statusMessage.textContent =
+                "✅ Payment verified successfully!";
+
+
+            verifiedCard.scrollIntoView({
+                behavior: "smooth"
+            });
+
+
+            return;
+        }
+
+
+        statusMessage.className =
+            "message error";
+
+
+        statusMessage.textContent =
+            "Unknown payment status received.";
+
+    } catch (error) {
+
+        console.error(
+            "Payment status error:",
+            error
+        );
+
+
+        if (showLoading) {
+
+            statusMessage.className =
+                "message error";
+
+
+            statusMessage.textContent =
+                error.message ||
+                "Unable to check payment status.";
+
+        }
+
+    } finally {
+
+        if (showLoading) {
+
+            checkStatusButton.disabled =
+                false;
+
+            checkStatusButton.textContent =
+                "🔄 CHECK PAYMENT STATUS";
+
+        }
+
+    }
+
+}
+
+
+/* ==========================================
+   MANUAL STATUS BUTTON
+========================================== */
+
+checkStatusButton.addEventListener(
+    "click",
+    function () {
+
+        checkPaymentStatus(true);
+
+    }
+);
+
+
+/* ==========================================
+   AUTO STATUS CHECK
+========================================== */
+
+function startAutoStatusCheck() {
+
+    stopAutoStatusCheck();
+
+
+    autoCheckTimer =
+        setInterval(
+            function () {
+
+                if (accessToken) {
+
+                    checkPaymentStatus(false);
+
+                }
+
+            },
+            10000
+        );
+
+}
+
+
+/* ==========================================
+   STOP AUTO CHECK
+========================================== */
+
+function stopAutoStatusCheck() {
+
+    if (autoCheckTimer) {
+
+        clearInterval(
+            autoCheckTimer
+        );
+
+        autoCheckTimer = null;
+
+    }
+
+}
+
+
+/* ==========================================
+   CHECK SAVED ACCESS TOKEN
+========================================== */
+
+async function checkSavedAccess() {
+
+    if (!accessToken) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/player/access/" +
+                encodeURIComponent(
+                    accessToken
+                ),
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        /* =========================
+           PENDING
+        ========================= */
+
+        if (data.status === "PENDING") {
+
+            showPendingPlayer(data);
+
+            startAutoStatusCheck();
+
+            return;
+        }
+
+
+        /* =========================
+           REJECTED
+        ========================= */
+
+        if (data.status === "REJECTED") {
+
+            showRejectedPlayer(data);
+
+            return;
+        }
+
+
+        /* =========================
+           VERIFIED
+        ========================= */
+
+        if (data.status === "VERIFIED") {
+
+            showVerifiedPlayer(data);
+
+            return;
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Saved access check error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ==========================================
+   START
+========================================== */
+
+loadTournament();
+
+checkSavedAccess();
+
+</script>
+
+</body>
+</html>
